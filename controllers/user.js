@@ -20,9 +20,6 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: 'Пользователь с указанными данными уже существует' });
-      }
-      if (err) {
         res.status(400).send({ message: 'Введены некорректные данные' });
       }
       if (err) {
