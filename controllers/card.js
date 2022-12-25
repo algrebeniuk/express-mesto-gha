@@ -8,9 +8,8 @@ module.exports.getCards = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  const owner = req.user_id;
 
-  Card.create({ name, link, owner })
+  Card.create({ name, link, owner: req.user_id })
     .then((card) => res.send(card))
     .catch((err) => {
       if (err) {
@@ -45,7 +44,7 @@ module.exports.likeCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err) {
-        res.status(400).send({ message: err.message });
+        res.status(404).send({ message: err.message });
       }
       if (err) {
         res.status(500).send({ message: err.message });
@@ -61,9 +60,6 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err) {
-        res.status(400).send({ message: err.message });
-      }
       if (err) {
         res.status(500).send({ message: err.message });
       }

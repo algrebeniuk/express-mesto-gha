@@ -22,6 +22,9 @@ app.use((req, res, next) => {
 
 app.use('/', userRouter);
 app.use('/', cardRouter);
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'File not found' });
+});
 
 app.get('/', (req, res) => {
   res.send('Приложение работает!');

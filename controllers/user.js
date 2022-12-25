@@ -10,7 +10,14 @@ module.exports.getCurrentUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .then((user) => res.send(user))
-    .catch(() => res.status(400).send({ message: 'Запрашиваемый пользователь не найден' }));
+    .catch((err) => {
+      if (err) {
+        res.status(400).send({ message: err.message });
+      }
+      if (err) {
+        res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+      }
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -32,14 +39,14 @@ module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   const owner = req.user._id;
 
-  User.findByIdAndUpdate(owner, { name, about }, { new: true })
+  User.findByIdAndUpdate(owner, { name, about }, { runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err) {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(404).send({ message: 'Введены некорректные данные' });
       }
       if (err) {
-        res.status(400).send({ message: 'Введены некорректные данные' });
+        res.status(400).send({ message: 'Пользователь не найден' });
       }
       if (err) {
         res.status(500).send({ message: err.message });
