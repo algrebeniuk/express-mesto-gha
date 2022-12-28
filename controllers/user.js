@@ -9,13 +9,16 @@ module.exports.getUsers = (req, res) => {
 module.exports.getCurrentUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (user === null) {
+        res.status(404).send({ message: 'Такого пользователя не существует' });
+        return;
+      }
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Неверные данные или пользователя не существует' });
-      }
-      if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Пользователь с указанными данными не найден' });
       }
       if (err) {
         res.status(500).send({ message: err.message });
@@ -41,14 +44,14 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Введены некорректные данные' });
+        res.status(404).send({ message: 'Пользователь не найден' });
       }
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Пользователь не найден' });
+        res.status(400).send({ message: 'Введены некорректные данные' });
       }
       if (err) {
         res.status(500).send({ message: err.message });
