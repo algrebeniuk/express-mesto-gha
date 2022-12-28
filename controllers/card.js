@@ -12,7 +12,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner: req.user_id })
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Введены некорректные данные' });
       }
       if (err) {
@@ -22,13 +22,19 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.delete({})
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err) {
-        res.status(404).send({ message: err.message });
+  const { cardId } = req.params;
+  Card.findByIdAndRemove(cardId)
+    .then((card) => {
+      if (card) {
+        res.send(card);
+      } else {
+        res.status(404).send({ message: 'Карточка не найдены' });
       }
-      if (err) {
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err.message });
+      } else {
         res.status(500).send({ message: err.message });
       }
     });
@@ -61,10 +67,10 @@ module.exports.dislikeCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err) {
-        res.status(500).send({ message: err.message });
+        res.status(404).send({ message: err.message });
       }
       if (err) {
-        res.status(404).send({ message: err.message });
+        res.status(500).send({ message: err.message });
       }
     });
 };

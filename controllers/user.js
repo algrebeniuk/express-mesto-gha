@@ -11,11 +11,14 @@ module.exports.getCurrentUser = (req, res) => {
   User.findById(userId)
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err) {
-        res.status(400).send({ message: err.message });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Неверные данные или пользователя не существует' });
+      }
+      if (err.message === 'NotFound') {
+        res.status(404).send({ message: 'Пользователь с указанными данными не найден' });
       }
       if (err) {
-        res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+        res.status(500).send({ message: err.message });
       }
     });
 };
@@ -37,15 +40,14 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
-  const owner = req.user._id;
 
-  User.findByIdAndUpdate(owner, { name, about }, { runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err) {
+      if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Введены некорректные данные' });
       }
-      if (err) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Пользователь не найден' });
       }
       if (err) {
