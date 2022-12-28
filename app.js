@@ -1,7 +1,7 @@
 import express, { json } from 'express';
 import { set, connect } from 'mongoose';
-import userRouter from './routes/user';
-import cardRouter from './routes/card';
+import userRouter from './routes/user.js';
+import cardRouter from './routes/card.js';
 
 
 // eslint-disable-next-line no-undef

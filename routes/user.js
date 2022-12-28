@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-undef
-const userRouter = require('express').Router();
-import { getUsers, getCurrentUser, createUser, updateUser, updateUserAvatar } from '../controllers/user';
+import express  from 'express';
+const userRouter = express.Router();
+import { getUsers, getCurrentUser, createUser, updateUser, updateUserAvatar } from '../controllers/user.js';
 
 userRouter.get('/', getUsers);
 userRouter.get('/:userId', getCurrentUser);

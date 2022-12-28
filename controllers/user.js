@@ -1,4 +1,4 @@
-import User from '../models/user';
+import User from '../models/user.js';
 
 export function getUsers(req, res) {
   User.find({})
