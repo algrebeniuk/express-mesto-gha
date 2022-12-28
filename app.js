@@ -26,10 +26,6 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'File not found' });
 });
 
-app.get('/', (req, res) => {
-  res.send('Приложение работает!');
-});
-
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);

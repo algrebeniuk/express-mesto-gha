@@ -46,14 +46,14 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      res.send({ data: card });
+      if (card) {
+        res.send({ data: card });
+      }
+      res.status(404).send({ message: 'Карточка не найдена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Введены некорректные данные' });
-      }
-      if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Карточка не найдена' });
       }
       if (err) {
         res.status(500).send({ message: err.message });
@@ -68,14 +68,14 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      res.send({ data: card });
+      if (card) {
+        res.send({ data: card });
+      }
+      res.status(404).send({ message: 'Карточка не найдена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Введены некорректные данные' });
-      }
-      if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Карточка не найдена' });
       }
       if (err) {
         res.status(500).send({ message: err.message });
