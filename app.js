@@ -1,16 +1,17 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const userRouter = require('./routes/user');
-const cardRouter = require('./routes/card');
+import express, { json } from 'express';
+import { set, connect } from 'mongoose';
+import userRouter from './routes/user';
+import cardRouter from './routes/card';
 
 
+// eslint-disable-next-line no-undef
 const { PORT = 3000 } = process.env;
 const app = express();
 
-mongoose.set('strictQuery', false);
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+set('strictQuery', false);
+connect('mongodb://127.0.0.1:27017/mestodb');
 
-app.use(express.json());
+app.use(json());
 
 app.use((req, res, next) => {
   req.user = {

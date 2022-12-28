@@ -1,12 +1,12 @@
-const User = require('../models/user');
+import User from '../models/user';
 
-module.exports.getUsers = (req, res) => {
+export function getUsers(req, res) {
   User.find({})
     .then((user) => res.send(user))
     .catch(() => res.status(500).send({ message: 'Пользователи не найдены' }));
-};
+}
 
-module.exports.getCurrentUser = (req, res) => {
+export function getCurrentUser(req, res) {
   const { userId } = req.params;
   User.findById(userId)
     .then((user) => {
@@ -24,9 +24,9 @@ module.exports.getCurrentUser = (req, res) => {
         res.status(500).send({ message: err.message });
       }
     });
-};
+}
 
-module.exports.createUser = (req, res) => {
+export function createUser(req, res) {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
@@ -39,9 +39,9 @@ module.exports.createUser = (req, res) => {
         res.status(500).send({ message: err.message });
       }
     });
-};
+}
 
-module.exports.updateUser = (req, res) => {
+export function updateUser(req, res) {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
@@ -57,9 +57,9 @@ module.exports.updateUser = (req, res) => {
         res.status(500).send({ message: err.message });
       }
     });
-};
+}
 
-module.exports.updateUserAvatar = (req, res) => {
+export function updateUserAvatar(req, res) {
   const { avatar } = req.body;
   const owner = req.user._id;
 
@@ -76,4 +76,4 @@ module.exports.updateUserAvatar = (req, res) => {
         res.status(500).send({ message: err.message });
       }
     });
-};
+}
