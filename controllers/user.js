@@ -16,6 +16,9 @@ export function getCurrentUser(req, res) {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(404).send({ message: 'Пользователь не найден' });
+      }
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: err.message });
       } else {
         res.status(500).send({ message: err.message });
       }
