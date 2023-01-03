@@ -1,4 +1,4 @@
-import Card from '../models/card';
+import Card from '../models/card.js';
 
 export function getCards(req, res) {
   Card.find({})
