@@ -16,6 +16,7 @@
   "keywords": [],
   "author": "",
   "type": "module",
+  "module": "es6",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/algrebeniuk/express-mesto-gha/issues"
