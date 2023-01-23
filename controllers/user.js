@@ -20,7 +20,7 @@ export function getUser(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw next(new BadRequest(err.message));
+        next(new BadRequest(err.message));
       }
       next(err);
     });
@@ -42,10 +42,10 @@ export function createUser(req, res, next) {
       }))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          throw next(new BadRequest('Введены некорректные данные'));
+          next(new BadRequest('Введены некорректные данные'));
         }
         if (err.code === 11000) {
-          throw next(new ConflictingRequest('Пользователь с такой почтой уже существует'));
+          next(new ConflictingRequest('Пользователь с такой почтой уже существует'));
         }
         if (err) {
           next(err);
@@ -71,7 +71,7 @@ export function login(req, res, next) {
       res.send({ message: 'Всё верно!' });
     })
     .catch(() => {
-      throw next(new UnauthorizedError('Неправильные почта или пароль'));
+      next(new UnauthorizedError('Неправильные почта или пароль'));
     });
 }
 
@@ -82,10 +82,10 @@ export function updateUser(req, res, next) {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        throw next(new NotFoundError('Пользователь не найден'));
+        next(new NotFoundError('Пользователь не найден'));
       }
       if (err.name === 'ValidationError') {
-        throw next(new BadRequest('Введены некорректные данные'));
+        next(new BadRequest('Введены некорректные данные'));
       }
       if (err) {
         next(err);
@@ -101,10 +101,10 @@ export function updateUserAvatar(req, res, next) {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        throw next(new NotFoundError('Пользователь не найден'));
+        next(new NotFoundError('Пользователь не найден'));
       }
       if (err.name === 'ValidationError') {
-        throw next(new BadRequest('Введены некорректные данные'));
+        next(new BadRequest('Введены некорректные данные'));
       }
       if (err) {
         next(err);
@@ -116,7 +116,7 @@ export function getCurrentUser(req, res, next) {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw next(new NotFoundError('Пользователь не найден'));
+        next(new NotFoundError('Пользователь не найден'));
       } else res.send(user);
     })
     .catch(next);

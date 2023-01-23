@@ -16,7 +16,7 @@ export function createCard(req, res, next) {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw next(new BadRequest('Введены некорректные данные'));
+        next(new BadRequest('Введены некорректные данные'));
       } else {
         next(err);
       }
@@ -29,17 +29,17 @@ export function deleteCard(req, res, next) {
     .orFail(new NotFoundError('Карточка не найдена'))
     .then(async (card) => {
       if (JSON.stringify(card.owner) !== JSON.stringify(req.user.payload)) {
-        throw next(new ForbiddenError('Невозможно удалить чужую карточку'));
+        next(new ForbiddenError('Невозможно удалить чужую карточку'));
       }
       await card.remove();
       return res.send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.message === 'NotValidId') {
-        throw next(new BadRequest('Введены некорректные данные'));
+        next(new BadRequest('Введены некорректные данные'));
       }
       if (err.name === 'CastError') {
-        throw next(new BadRequest('Введены некорректные данные'));
+        next(new BadRequest('Введены некорректные данные'));
       }
       if (err) {
         next(err);
@@ -59,7 +59,7 @@ export function likeCard(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw next(new BadRequest('Введены некорректные данные'));
+        next(new BadRequest('Введены некорректные данные'));
       }
       if (err) {
         next(err);
@@ -79,7 +79,7 @@ export function dislikeCard(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw next(new BadRequest('Введены некорректные данные'));
+        next(new BadRequest('Введены некорректные данные'));
       }
       if (err) {
         next(err);
