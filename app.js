@@ -19,6 +19,9 @@ app.use(json());
 
 app.post('/signup', validationOfUserSignUp, createUser);
 app.post('/signin', validationOfUserSignIn, login);
+
+app.use(auth);
+
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
