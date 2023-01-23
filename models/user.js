@@ -23,6 +23,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+    validate: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
   },
   password: {
     type: String,

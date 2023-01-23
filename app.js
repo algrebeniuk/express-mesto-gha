@@ -7,6 +7,7 @@ import { login, createUser } from './controllers/user.js';
 import auth from './middlewares/auth.js';
 import NotFoundError from './errors/not-found-error.js';
 import CentralizedErrorHandling from './middlewares/centralized-error-handling.js';
+import { validationOfUserSignUp, validationOfUserSignIn } from './middlewares/user-joi-validation.js';
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -16,8 +17,8 @@ connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(json());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signup', validationOfUserSignUp, createUser);
+app.post('/signin', validationOfUserSignIn, login);
 
 app.use(auth);
 

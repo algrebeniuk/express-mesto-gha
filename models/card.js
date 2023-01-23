@@ -7,7 +7,7 @@ const cardSchema = new Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
-    validate: /[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/gi,
+    validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
   },
   link: {
     type: String,
