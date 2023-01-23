@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import { celebrate, Joi } from 'celebrate';
 
 export const validationOfUserSignUp = celebrate({
@@ -6,7 +7,7 @@ export const validationOfUserSignUp = celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+    avatar: Joi.string().regex(/[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/),
   }),
 });
 
@@ -25,7 +26,7 @@ export const validationOfGettingUserId = celebrate({
 
 export const validationOfAvatarUpdate = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().regex(/https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+    avatar: Joi.string().required().regex(/[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/),
   }),
 });
 

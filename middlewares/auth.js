@@ -1,15 +1,18 @@
 import jwt from 'jsonwebtoken';
+import UnauthorizedError from '../errors/unauthorized-error.js';
+import ForbiddenError from '../errors/forbidden-error.js';
 
 const { JWT_SECRET, NODE_ENV } = process.env;
 
 // eslint-disable-next-line consistent-return
 export default function tokenVerification(req, res, next) {
-  const token = req.headers.authorization;
+  const { authorization } = req.headers;
 
-  if (!token) {
-    return res.status(401).send({ message: 'Необходима авторизация' });
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throw new UnauthorizedError('Необходима авторизация');
   }
 
+  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
@@ -17,10 +20,10 @@ export default function tokenVerification(req, res, next) {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log(error.name);
-    return res.status(403).send({ message: 'Нет доступа' });
+    throw new ForbiddenError('Нет доступа');
   }
 
   req.user = payload;
 
-  next();
+  return next();
 }

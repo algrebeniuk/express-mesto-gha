@@ -30,26 +30,28 @@ export function createUser(req, res, next) {
   const {
     name, about, avatar, email, password,
   } = req.body;
-
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
-    }))
-    .then((user) => res.status(201).send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-    }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw next(new BadRequest('Введены некорректные данные'));
-      } else if (err.code === 11000) {
-        throw next(new ConflictingRequest('Пользователь с такой почтой уже существует'));
-      } else {
-        next(err);
-      }
-    });
+    })
+      .then((user) => res.status(201).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          throw next(new BadRequest('Введены некорректные данные'));
+        }
+        if (err.code === 11000) {
+          throw next(new ConflictingRequest('Пользователь с такой почтой уже существует'));
+        }
+        if (err) {
+          next(err);
+        }
+      }))
+    .catch(next);
 }
 
 export function login(req, res, next) {
@@ -115,7 +117,7 @@ export function getCurrentUser(req, res, next) {
     .then((user) => {
       if (!user) {
         throw next(new NotFoundError('Пользователь не найден'));
-      }
+      } else res.send(user);
     })
     .catch(next);
 }
