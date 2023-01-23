@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import { Schema, model } from 'mongoose';
 
 const cardSchema = new Schema({
@@ -6,6 +7,7 @@ const cardSchema = new Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
+    validate: /[-a-zA-Z0-9@:%_\+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&\/=]*)?/gi,
   },
   link: {
     type: String,
