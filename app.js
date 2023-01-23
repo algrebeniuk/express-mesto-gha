@@ -22,9 +22,7 @@ app.post('/signin', validationOfUserSignIn, login);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
-app.use(auth);
-
-app.use('*', (req, res, next) => {
+app.use('*', auth, (req, res, next) => {
   throw next(new NotFoundError('File not found'));
 });
 
