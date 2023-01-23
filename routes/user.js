@@ -9,8 +9,8 @@ import {
 const userRouter = express.Router();
 
 userRouter.get('/', getUsers);
+userRouter.get('/me', getCurrentUser);
 userRouter.get('/:userId', validationOfGettingUserId, getUser);
-userRouter.get('/users/me', getCurrentUser);
 userRouter.patch('/me', validationOfUserUpdate, updateUser);
 userRouter.patch('/me/avatar', validationOfAvatarUpdate, updateUserAvatar);
 
