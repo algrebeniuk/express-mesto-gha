@@ -57,29 +57,31 @@ export function createUser(req, res, next) {
 
 export function login(req, res, next) {
   const { email, password } = req.body;
-
-  User.findOne({ email }).select('+password')
+  User.findOne({ email })
+    .select('+password')
     .then((user) => {
       if (!user) {
-        throw new UnauthorizedError('Неправильные почта или пароль');
+        throw new NotFoundError('Неправильные почта или пароль');
       }
-      return bcrypt.compare(password, user.password);
+      return bcrypt
+        .compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new NotFoundError('Неправильные почта или пароль');
+          }
+          return user;
+        })
+        .then(() => {
+          const token = jwt.sign(
+            { _id: user._id },
+            'some-secret-key',
+            { expiresIn: '7d' },
+          );
+          res.send({ token });
+        })
+        .catch(next);
     })
-    .then((matched) => {
-      if (!matched) {
-        throw new UnauthorizedError('Неправильные почта или пароль');
-      }
-      return matched;
-    })
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-        expiresIn: '7d',
-      });
-      res.send({ message: 'Всё верно!', token });
-    })
-    .catch(() => {
-      next(new UnauthorizedError('Неправильные почта или пароль'));
-    });
+    .catch(next);
 }
 
 export function updateUser(req, res, next) {
@@ -89,10 +91,10 @@ export function updateUser(req, res, next) {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь не найден'));
+        next(new UnauthorizedError('Пользователь не найден'));
       }
       if (err.name === 'ValidationError') {
-        next(new BadRequest('Введены некорректные данные'));
+        next(new UnauthorizedError('Введены некорректные данные'));
       }
       if (err) {
         next(err);
@@ -121,10 +123,15 @@ export function updateUserAvatar(req, res, next) {
 
 export function getCurrentUser(req, res, next) {
   User.findById(req.user._id)
+    .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => {
-      if (!user) {
-        next(new NotFoundError('Пользователь не найден'));
-      } else res.send(user);
+      res.send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest(err.message));
+      } else {
+        next(err);
+      }
+    });
 }

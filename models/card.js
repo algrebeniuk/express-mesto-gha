@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-escape */
 import { Schema, model } from 'mongoose';
+import validator from 'validator';
 
 const cardSchema = new Schema({
   name: {
@@ -7,11 +8,15 @@ const cardSchema = new Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
-    validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
   },
   link: {
     type: String,
     required: true,
+    validate: {
+      validator(value) {
+        return validator.isURL(value);
+      },
+    },
   },
   owner: {
     type: Schema.Types.ObjectId,
