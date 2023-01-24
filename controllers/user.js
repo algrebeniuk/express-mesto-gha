@@ -6,8 +6,6 @@ import BadRequest from '../errors/bad-request.js';
 import ConflictingRequest from '../errors/conflicting-request.js';
 import NotFoundError from '../errors/not-found-error.js';
 
-const { NODE_ENV, JWT_SECRET } = process.env;
-
 export function getUsers(req, res, next) {
   User.find({})
     .then((user) => res.send(user))
@@ -71,7 +69,10 @@ export function login(req, res, next) {
       if (!matched) {
         throw new UnauthorizedError('Неправильные почта или пароль');
       }
-      const token = jwt.sign({ _id: matched._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
+      return matched;
+    })
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
         expiresIn: '7d',
       });
       res.send({ message: 'Всё верно!', token });
