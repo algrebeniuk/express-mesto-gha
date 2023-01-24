@@ -1,6 +1,8 @@
 import express, { json } from 'express';
 import { set, connect } from 'mongoose';
 import { errors } from 'celebrate';
+import { rateLimit } from 'express-rate-limit';
+import helmet from 'helmet';
 import userRouter from './routes/user.js';
 import cardRouter from './routes/card.js';
 import { login, createUser } from './controllers/user.js';
@@ -11,11 +13,19 @@ import { validationOfUserSignUp, validationOfUserSignIn } from './middlewares/us
 
 const { PORT = 3000 } = process.env;
 const app = express();
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 set('strictQuery', false);
 connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(json());
+app.use(limiter);
+app.use(helmet);
 
 app.post('/signup', validationOfUserSignUp, createUser);
 app.post('/signin', validationOfUserSignIn, login);
