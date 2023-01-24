@@ -27,12 +27,12 @@ export function deleteCard(req, res, next) {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
     .orFail(new NotFoundError('Карточка не найдена'))
-    .then(async (card) => {
+    .then((card) => {
       if (JSON.stringify(card.owner) !== JSON.stringify(req.user.payload)) {
         next(new ForbiddenError('Невозможно удалить чужую карточку'));
       }
-      await card.remove();
-      return res.send({ message: 'Карточка удалена' });
+      card.remove();
+      res.send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.message === 'NotValidId') {

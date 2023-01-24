@@ -57,26 +57,20 @@ export function createUser(req, res, next) {
 
 export function login(req, res, next) {
   const { email, password } = req.body;
-  User.findOne({ email })
-    .select('+password')
+  User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Неправильные почта или пароль');
+        throw new UnauthorizedError('Неправильные почта или пароль');
       }
-      return bcrypt
-        .compare(password, user.password)
+      return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new NotFoundError('Неправильные почта или пароль');
+            throw new UnauthorizedError('Неправильные почта или пароль');
           }
           return user;
         })
         .then(() => {
-          const token = jwt.sign(
-            { _id: user._id },
-            'some-secret-key',
-            { expiresIn: '7d' },
-          );
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
           res.send({ token });
         })
         .catch(next);
