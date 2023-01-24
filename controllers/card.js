@@ -28,7 +28,7 @@ export function deleteCard(req, res, next) {
   Card.findByIdAndRemove(cardId)
     .orFail(new NotFoundError('Карточка не найдена'))
     .then((card) => {
-      if (JSON.stringify(card.owner) !== JSON.stringify(req.user.payload)) {
+      if (!card.owner.equals(req.user._id)) {
         next(new ForbiddenError('Невозможно удалить чужую карточку'));
       }
       card.remove();
