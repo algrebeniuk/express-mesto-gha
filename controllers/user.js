@@ -1,9 +1,12 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 import UnauthorizedError from '../errors/unauthorized-error.js';
 import BadRequest from '../errors/bad-request.js';
 import ConflictingRequest from '../errors/conflicting-request.js';
 import NotFoundError from '../errors/not-found-error.js';
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 export function getUsers(req, res, next) {
   User.find({})
@@ -60,15 +63,18 @@ export function login(req, res, next) {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+        throw new UnauthorizedError('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password);
     })
     .then((matched) => {
       if (!matched) {
-        throw Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+        throw new UnauthorizedError('Неправильные почта или пароль');
       }
-      res.send({ message: 'Всё верно!' });
+      const token = jwt.sign({ _id: matched._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
+        expiresIn: '7d',
+      });
+      res.send({ message: 'Всё верно!', token });
     })
     .catch(() => {
       next(new UnauthorizedError('Неправильные почта или пароль'));

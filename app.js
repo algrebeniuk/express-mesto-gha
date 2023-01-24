@@ -20,10 +20,12 @@ app.use(json());
 app.post('/signup', validationOfUserSignUp, createUser);
 app.post('/signin', validationOfUserSignIn, login);
 
+app.use(auth);
+
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
-app.use('*', auth, (req, res, next) => {
+app.use((req, res, next) => {
   next(new NotFoundError('File not found'));
 });
 
